@@ -97,7 +97,7 @@ namespace Evidencia4._1
                 var opcionesJson = new JsonSerializerOptions { WriteIndented = true };
                 string jsonActualizado = JsonSerializer.Serialize(listaRegistros, opcionesJson);
 
-
+                
                 File.WriteAllText(rutaArchivo, jsonActualizado);
             }
             catch (Exception)
