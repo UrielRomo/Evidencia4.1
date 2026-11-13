@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 
 namespace Evidencia4._1
 {
@@ -13,9 +14,19 @@ namespace Evidencia4._1
             this.InitializeComponent();
         }
 
+       
+        public class RegistroPerfume
+        {
+            public DateTime Fecha { get; set; }
+            public string AromaSeleccionado { get; set; }
+            public string EventoSeleccionado { get; set; }
+            public string MomentoSeleccionado { get; set; }
+            public List<string> PerfumesRecomendados { get; set; }
+        }
+
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {
-            // Validar que se hayan seleccionado todas las opciones
+          
             if (CmbAroma.SelectedItem == null || CmbEvento.SelectedItem == null || CmbMomento.SelectedItem == null)
             {
                 InfoBarGuardado.IsOpen = false;
@@ -25,15 +36,14 @@ namespace Evidencia4._1
                 return;
             }
 
-            // Extraer las selecciones de los ComboBox
             string aroma = CmbAroma.SelectedItem.ToString();
             string evento = CmbEvento.SelectedItem.ToString();
             string momento = CmbMomento.SelectedItem.ToString();
 
-            // Generar las 5 recomendaciones basadas en las elecciones
+            
             List<string> perfumes = ObtenerPerfumesSegunCriterios(aroma, evento, momento);
 
-            // Mostrar el perfil seleccionado y los resultados en pantalla
+            
             TxtResumenPerfil.Text = $"Perfil: Aroma {aroma.Split(' ')[0]} | Ocasión: {evento} | Momento: {momento.Split(' ')[0]}";
 
             string resultadoTexto = "";
@@ -45,28 +55,55 @@ namespace Evidencia4._1
             TxtRecomendaciones.Text = resultadoTexto.Trim();
             BorderResultado.Visibility = Visibility.Visible;
 
-            // 1. Activar la notificación visual de éxito
+            
             InfoBarGuardado.IsOpen = true;
 
-            // 2. Guardar los datos en un archivo de texto local en la computadora
+            
             try
             {
-                string carpetaLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string rutaArchivo = Path.Combine(carpetaLocal, "MisPreferenciasPerfumes.txt");
+                
+                string carpetaDescargas = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                string rutaArchivo = Path.Combine(carpetaDescargas, "HistorialPerfumes.json");
 
-                string contenidoRegistro = $"=== Registro: {DateTime.Now} ===\n" +
-                                           $"• Aroma: {aroma}\n" +
-                                           $"• Evento: {evento}\n" +
-                                           $"• Momento: {momento}\n" +
-                                           $"• Recomendaciones:\n{resultadoTexto}\n" +
-                                           new string('-', 40) + "\n\n";
+               
+                var nuevoRegistro = new RegistroPerfume
+                {
+                    Fecha = DateTime.Now,
+                    AromaSeleccionado = aroma,
+                    EventoSeleccionado = evento,
+                    MomentoSeleccionado = momento,
+                    PerfumesRecomendados = perfumes
+                };
 
-                File.AppendAllText(rutaArchivo, contenidoRegistro);
+               
+                List<RegistroPerfume> listaRegistros = new List<RegistroPerfume>();
+                if (File.Exists(rutaArchivo))
+                {
+                    string jsonExistente = File.ReadAllText(rutaArchivo);
+                    if (!string.IsNullOrWhiteSpace(jsonExistente))
+                    {
+                        var registrosPrevios = JsonSerializer.Deserialize<List<RegistroPerfume>>(jsonExistente);
+                        if (registrosPrevios != null)
+                        {
+                            listaRegistros = registrosPrevios;
+                        }
+                    }
+                }
+
+               
+                listaRegistros.Add(nuevoRegistro);
+
+               
+                var opcionesJson = new JsonSerializerOptions { WriteIndented = true };
+                string jsonActualizado = JsonSerializer.Serialize(listaRegistros, opcionesJson);
+
+
+                File.WriteAllText(rutaArchivo, jsonActualizado);
             }
             catch (Exception)
             {
                 InfoBarGuardado.Title = "Aviso";
-                InfoBarGuardado.Message = "Tus respuestas se mostraron, pero hubo un problema al guardarlas en disco.";
+                InfoBarGuardado.Message = "Tus respuestas se mostraron, pero hubo un problema al guardarlas en la carpeta Descargas.";
                 InfoBarGuardado.Severity = InfoBarSeverity.Warning;
             }
         }
@@ -99,7 +136,7 @@ namespace Evidencia4._1
                 lista.Add("Armani Code Parfum – Notas orientales ambarinas profundas y modernas.");
                 lista.Add("Paco Rabanne One Million – Dulce, especiado, llamativo y de gran proyección.");
             }
-            else // Fresco / Acuático
+            else 
             {
                 lista.Add("Nautica Voyage – Económico, sumamente fresco y limpio para uso diario.");
                 lista.Add("Versace Dylan Blue – Fresco con un toque amaderado e incienso muy versátil.");

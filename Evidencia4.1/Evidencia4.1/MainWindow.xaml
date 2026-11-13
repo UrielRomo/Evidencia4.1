@@ -11,13 +11,12 @@
     <ScrollViewer Padding="32">
         <StackPanel Spacing="20" MaxWidth="550" HorizontalAlignment="Left">
 
-            <!-- Título -->
+         
             <TextBlock Text="Asistente de Perfumes 🧴" Style="{StaticResource TitleTextBlockStyle}" />
             <TextBlock Text="Responde estas breves preguntas para descubrir 5 fragancias ideales para ti:" 
                        Style="{StaticResource BodyTextBlockStyle}" 
                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
-            <!-- Pregunta 1: Tipo de Aroma -->
             <StackPanel Spacing="6">
                 <TextBlock Text="1. ¿Qué tipo de familia olfativa prefieres?" FontWeight="SemiBold" />
                 <ComboBox x:Name="CmbAroma" PlaceholderText="Selecciona un aroma" HorizontalAlignment="Stretch">
@@ -28,7 +27,6 @@
                 </ComboBox>
             </StackPanel>
 
-            <!-- Pregunta 2: Tipo de Evento -->
             <StackPanel Spacing="6">
                 <TextBlock Text="2. ¿Para qué tipo de evento o ocasión lo buscas?" FontWeight="SemiBold" />
                 <ComboBox x:Name="CmbEvento" PlaceholderText="Selecciona una ocasión" HorizontalAlignment="Stretch">
@@ -39,7 +37,7 @@
                 </ComboBox>
             </StackPanel>
 
-            <!-- Pregunta 3: Momento del día -->
+       
             <StackPanel Spacing="6">
                 <TextBlock Text="3. ¿Lo usarás principalmente de día o de noche?" FontWeight="SemiBold" />
                 <ComboBox x:Name="CmbMomento" PlaceholderText="Selecciona el momento" HorizontalAlignment="Stretch">
@@ -49,11 +47,9 @@
                 </ComboBox>
             </StackPanel>
 
-            <!-- Botón de Búsqueda -->
             <Button x:Name="BtnBuscar" Content="Recomendar 5 Perfumes" Click="BtnBuscar_Click" 
                     Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Stretch" Margin="0,10,0,0" />
 
-            <!-- Aviso de Guardado (InfoBar) -->
             <InfoBar x:Name="InfoBarGuardado" 
                      Title="¡Guardado exitoso!" 
                      Message="Tus respuestas y recomendaciones se han guardado correctamente." 
@@ -62,7 +58,7 @@
                      IsOpen="False" 
                      Margin="0,5,0,0" />
 
-            <!-- Área de Resultados -->
+            
             <Border x:Name="BorderResultado" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Visibility="Collapsed">
                 <StackPanel Spacing="10">
